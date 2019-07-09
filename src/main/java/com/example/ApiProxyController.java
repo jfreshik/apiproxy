@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +25,8 @@ import org.springframework.web.util.HtmlUtils;
 @Validated
 public class ApiProxyController {
 
+	protected final Log logger = LogFactory.getLog(getClass());
+	
     @Autowired
     private RestTemplate restTemplate;
     
@@ -35,12 +39,15 @@ public class ApiProxyController {
                                    HttpMethod method,
                                    HttpServletRequest request) throws URISyntaxException {
     	
+    	final String qs = request.getQueryString();
+    	logger.info("queryString: " + qs);
     	HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
     	
-    	String queryString = HtmlUtils.htmlUnescape(request.getQueryString());
+    	String unescapedQs = HtmlUtils.htmlUnescape(qs);
     	URI uri = new URI("http", null, DEV_WAS_IP, DEV_WAS_PORT, 
-    			request.getRequestURI(), queryString, null);
+    			request.getRequestURI(), unescapedQs, null);
 
+    	logger.info("proxy uri: " + uri.toString());
     	return proxyRequest(method, uri, httpEntity);
     }
 
