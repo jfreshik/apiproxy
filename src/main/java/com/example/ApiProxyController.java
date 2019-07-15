@@ -3,7 +3,6 @@ package com.example;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.HtmlUtils;
 
 @RestController
 @Validated
@@ -44,7 +41,8 @@ public class ApiProxyController {
     	
     	HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
     	
-    	final String qs = refineQueryString(request.getQueryString());
+    	//final String qs = refineQueryString(request.getQueryString());
+    	final String qs = request.getQueryString();
     	URI uri = new URI("http", null, DEV_WAS_IP, DEV_WAS_PORT, 
     			request.getRequestURI(), qs, null);
 
@@ -54,13 +52,13 @@ public class ApiProxyController {
     	return response;
     }
     
-    private String refineQueryString(final String queryString) throws UnsupportedEncodingException {
-    	logger.info("queryString: " + queryString);
-    	if(StringUtils.isEmpty(queryString)) return null;
-    	final String decodedQs = URLDecoder.decode(queryString, "UTF-8");
-    	String unescapedQs = HtmlUtils.htmlUnescape(decodedQs);
-    	return unescapedQs;
-    }
+//    private String refineQueryString(final String queryString) throws UnsupportedEncodingException {
+//    	logger.info("queryString: " + queryString);
+//    	if(StringUtils.isEmpty(queryString)) return null;
+//    	final String decodedQs = URLDecoder.decode(queryString, "UTF-8");
+//    	String unescapedQs = HtmlUtils.htmlUnescape(decodedQs);
+//    	return unescapedQs;
+//    }
 
 //    @RequestMapping("/proxy")
 //    public ResponseEntity proxy(@RequestBody(required = false) String body,
